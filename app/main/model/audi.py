@@ -4,11 +4,10 @@ class Audi(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(255), nullable=False)
-   
     admin = db.Column(db.Boolean, nullable=False, default=False)
     seats=db.Column(db.Integer)
     description=Column(db.String(255))
     
     
     def __repr__(self):
-        return "<User '{}'>".format(self.username)
+        return "<Audi '{}'>".format(self.name)
