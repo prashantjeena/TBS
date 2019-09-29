@@ -1,5 +1,7 @@
+from .. import db, flask_bcrypt
+
 class Audi(db.Model):
-    """ User Model for storing user related details """
+    """ User Model for storing auditorium related details """
     __tablename__ = "audi"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

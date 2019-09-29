@@ -5,7 +5,7 @@ from ..util.user_util import UserDto
 from ..service.user_service import save_new_user, get_all_users, get_a_user
 
 api = UserDto.api
-_user = UserDto.end_user
+_user = UserDto.EndUser
 
 
 @api.route('/')

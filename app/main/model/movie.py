@@ -1,5 +1,7 @@
+from .. import db, flask_bcrypt
+
 class Movie(db.Model):
-    """ User Model for storing user related details """
+    """ User Model for storing movie related details """
     __tablename__ = "movie"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

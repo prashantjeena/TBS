@@ -2,13 +2,13 @@ import uuid
 import datetime
 
 from app.main import db
-from app.main.model.user import User
+from app.main.model.user import EndUser
 
 
 def save_new_user(data):
-    user = User.query.filter_by(email=data['email']).first()
+    user = EndUser.query.filter_by(email=data['email']).first()
     if not user:
-        new_user = User(
+        new_user = EndUser(
             public_id=str(uuid.uuid4()),
             email=data['email'],
             username=data['username'],
@@ -30,11 +30,11 @@ def save_new_user(data):
 
 
 def get_all_users():
-    return User.query.all()
+    return EndUser.query.all()
 
 
 def get_a_user(public_id):
-    return User.query.filter_by(public_id=public_id).first()
+    return EndUser.query.filter_by(public_id=public_id).first()
 
 
 def save_changes(data):
