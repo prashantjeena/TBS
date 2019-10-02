@@ -9,3 +9,10 @@ class EmployeeDto:
         'password': fields.String(required=True, description='employee password'),
         'public_id': fields.String(description='employee Identifier')
     })
+
+class EmpAuthDto:
+    api = Namespace('Empauth', description='employee authentication related operations')
+    emp_auth = api.model('emp_auth_details', {
+        'emp_id': fields.String(required=True, description='The employee id '),
+        'password': fields.String(required=True, description='The employee password '),
+    })
