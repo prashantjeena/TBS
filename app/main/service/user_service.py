@@ -19,7 +19,11 @@ def save_new_user(data):
         return generate_token(new_user)
         
     else:
-        return generate_token(new_user)
+        response_object = {
+            'status': 'fail',
+            'message': 'User already exists. Please Log in.',
+        }
+        return response_object, 409
 
 def generate_token(user):
     try:

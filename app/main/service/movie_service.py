@@ -5,7 +5,7 @@ from app.main import db
 from app.main.model.movie import Movie
 
 def save_new_movie(data):
-    emp = Movie.query.filter_by(title=data['title']).first()
+    emp = Movie.query.filter_by(title=data['title'])
     if not emp:
         new_movie = Movie(
             public_id=str(uuid.uuid4()),
@@ -15,7 +15,6 @@ def save_new_movie(data):
             director=data['director'],
             duration_min=data['duration_min'],
             description=data['description'],
-            price_movie=data['price'],
             released_on=data['datetime'],
             languages=data['languages']
         )

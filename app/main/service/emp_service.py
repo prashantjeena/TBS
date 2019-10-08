@@ -7,7 +7,7 @@ from app.main.model.employee import Employee
 
 def save_new_employee(data):
     emp = Employee.query.filter_by(emp_id=data['emp_id']).first()
-    if not emp:
+    if not emp:  
         new_emp = Employee(
             public_id=str(uuid.uuid4()),
             emp_id=data['emp_id'],
@@ -17,11 +17,7 @@ def save_new_employee(data):
             
         )
         save_changes(new_emp)
-        response_object = {
-            'status': 'success',
-            'message': 'Employee Successfully registered.'
-        }
-        return response_object, 201
+        return generate_token(new_emp)
     else:
         response_object = {
             'status': 'fail',
@@ -29,6 +25,22 @@ def save_new_employee(data):
         }
         return response_object, 409
 
+def generate_token(emp):
+    try:
+        # generate the auth token
+        auth_token = emp.encode_auth_token(emp.id)
+        response_object = {
+            'status': 'success',
+            'message': 'Successfully registered.',
+            'Authorization': auth_token.decode()
+        }
+        return response_object, 201
+    except Exception as e:
+        response_object = {
+            'status': 'fail',
+            'message': 'Some error occurred. Please try again.'
+        }
+        return response_object, 401
 
 def get_all_employees():
     return Employee.query.all()
