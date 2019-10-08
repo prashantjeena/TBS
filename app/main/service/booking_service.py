@@ -2,7 +2,7 @@ import uuid
 import datetime
 
 from app.main import db
-from app.main.model.theatre import Theatre,Audi
+from app.main.model.theatre import Theatre,Audi,Seat
 
 
 def T_check(data):
@@ -16,11 +16,6 @@ def T_check(data):
         }
         return response_object, 409
 
-response_object = {
-            'status': 'success',
-            'message': 'Successfully registered.'
-        }
-        return response_object, 201
 
 def A_check(data):
 	audi=Audi.query.filter_by(name=data['audi']).first()
@@ -36,18 +31,25 @@ def A_check(data):
 def S_check(data):
 
 	seat=Seat.query.filter_by(seat_no=data['seat']).first()
-	
-
-
-
-
+	if seat.status=='available':
+		response_object = {
+            'status': 'success',
+            'message': 'Seat is available'
+        }
+        return response_object, 201
+	else:
+		response_object = {
+            'status': 'fail',
+            'message': 'Seat is unavailable'
+        }
+		return response_object
 
 def get_all_movies():
     return Movie.query.all()
 
 
-def get_a_movie(public_id):
-    return Movie.query.filter_by(public_id=public_id).first()
+def get_a_movie(name):
+    return Movie.query.filter_by(name=name).first()
 
 
 def save_changes(data):

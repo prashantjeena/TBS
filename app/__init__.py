@@ -9,6 +9,7 @@ from .main.controller.emp_controller import api as emp_ns
 from .main.controller.theatre_controller import api as thtr_ns
 from .main.controller.theatre_controller import bpi as audi_ns
 from .main.controller.theatre_controller import spi as seat_ns
+
 blueprint = Blueprint('api', __name__)
 
 api = Api(blueprint,

@@ -4,7 +4,7 @@ from flask_restplus import Resource
 from ..util.theatre_util import TheatreDto,AudiDto,SeatDto
 from ..service.theatre_service import save_new_theatre, get_all_theatres, get_a_theatre
 from ..service.theatre_service import save_new_audi, get_all_audi, get_an_audi
-from ..service.theatre_service import init_seats
+from ..service.theatre_service import init_seats,get_audi_theatre,get_all_seats,get_a_seat
 
 api = TheatreDto.api
 _thtr = TheatreDto.thtr
@@ -14,8 +14,6 @@ _audi=AudiDto.audi
 
 spi= SeatDto.api
 _seat=SeatDto.seat
-
-
 
 @api.route('/')
 class TheatreList(Resource):
@@ -36,7 +34,7 @@ class TheatreList(Resource):
 
 @api.route('/<public_id>')
 @api.param('public_id', 'The theatre identifier')
-@api.response(404, 'Employee not found.')
+@api.response(404, 'Theatre not found.')
 class Theatre(Resource):
     @api.doc('get a theatre')
     @api.marshal_with(_thtr)
@@ -80,6 +78,23 @@ class Audi(Resource):
         else:
             return audi
 
+
+@bpi.route('/AudiT/<theatre_id>')
+@bpi.param('theatre_id', 'The theatre id')
+@bpi.response(404, 'audi not found.')
+
+class AudiT(Resource):
+    @bpi.doc('get an Audi in a theatre ')
+    @bpi.marshal_with(_audi)
+    def get(self, theatre_id):
+        """get an audi given its theatre id"""
+        audi = get_audi_theatre(theatre_id)
+        if not audi:
+            api.abort(404)
+        else:
+            return audi
+
+
 @spi.route('/')
 class SeatMap(Resource):
     @spi.doc('list_of_seats_in_audi')
@@ -97,15 +112,15 @@ class SeatMap(Resource):
         return init_seats(data=data)
 
 
-@spi.route('/<seat_no>')
-@spi.param('r,c', 'row and column')
+@spi.route('/<public_id>')
+@spi.param('public_id', 'public id of seat')
 @spi.response(404, 'Seat not in audi')
 class Seat(Resource):
     @spi.doc('get a seat')
     @spi.marshal_with(_seat)
     def get(self, public_id):
         """get a seat given its identifier"""
-        seat = get_a_seat(r,c)
+        seat = get_a_seat(public_id)
         if not seat:
             spi.abort(404)
         else:

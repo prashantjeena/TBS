@@ -57,12 +57,14 @@ def save_new_audi(data):
         }
         return response_object, 409
 
-def get_all_audi(theatre_id):
-    return Audi.query.filter_by(theatre_id=theatre_id)
+def get_all_audi():
+    return Audi.query.all()
 
+def get_audi_theatre(theatre_id):
+    return Audi.query.filter_by(theatre_id=theatre_id).first()
 
 def get_an_audi(public_id):
-    return Theatre.query.filter_by(public_id=public_id).first()	   
+    return Audi.query.filter_by(public_id=public_id).first()	   
 
 def init_seats(data):
     for i in range(1,data['rows']):
@@ -91,12 +93,12 @@ def init_seats(data):
 	        		)
 	        	save_changes(seat)
 
-def get_all_seats(audi_id):
-    return Seat.query.filter_by(audi_id=audi_id)
+def get_all_seats():
+    return Seat.query.all()
 
 
-def get_a_seat(r,c):
-    return Theatre.query.filter_by(seat_no=str(r)+str(c)).first()	 
+def get_a_seat(public_id):
+    return Seat.query.filter_by(public_id=public_id).first()
 
 def seat_price(seat_no,bpi):
 

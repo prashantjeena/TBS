@@ -26,7 +26,7 @@ class Audi(db.Model):
     rows = Column(Integer, nullable=False)
     columns = Column(Integer, nullable=False)
     public_id = Column(String(100), unique=True)
-    theatre_id = Column(Integer, ForeignKey('theatre.public_id'))
+    theatre_id = Column(Integer, ForeignKey('theatre.id'))
 
     def __repr__(self):
         return "<Audi : '{}'>".format(self.audi_name)
@@ -43,7 +43,7 @@ class Seat(db.Model):
     seat_no=Column(String(5))
     seat_price=Column(Integer)
     status=Column(String(20),nullable=False,default='available')
-    audi_id = Column(Integer, ForeignKey('audi.public_id'))
+    audi_id = Column(Integer, ForeignKey('audi.id'))
     
 
     def seatno(self,row,column):
