@@ -9,6 +9,15 @@ from .main.controller.emp_controller import api as emp_ns
 from .main.controller.theatre_controller import api as thtr_ns
 from .main.controller.theatre_controller import bpi as audi_ns
 from .main.controller.theatre_controller import spi as seat_ns
+from .main.controller.theatre_controller import mpi as movie_ns
+from .main.controller.booking_controller_admin import tpi as thtr1_ns
+from .main.controller.booking_controller_admin import mpi as mov_ns
+from .main.controller.booking_controller_admin import spi as show_ns
+from .main.controller.booking_controller_admin import dpi as date_ns
+from .main.controller.booking_controller_admin import stpi as slot_ns
+from .main.controller.booking_controller_admin import api as audi_ns
+from .main.controller.booking_controller_admin import cpi as seat_ns
+from .main.controller.booking_controller_admin import rpi as rsrv_ns
 
 blueprint = Blueprint('api', __name__)
 
@@ -25,3 +34,12 @@ api.add_namespace(emp_auth_ns)
 api.add_namespace(thtr_ns)
 api.add_namespace(audi_ns)
 api.add_namespace(seat_ns)
+api.add_namespace(movie_ns)
+api.add_namespace(thtr1_ns)
+api.add_namespace(mov_ns)
+api.add_namespace(show_ns)
+api.add_namespace(date_ns)
+api.add_namespace(slot_ns)
+api.add_namespace(audi_ns)
+api.add_namespace(seat_ns)
+api.add_namespace(rsrv_ns)

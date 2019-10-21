@@ -1,10 +1,11 @@
 from flask import request
 from flask_restplus import Resource
 
-from ..util.theatre_util import TheatreDto,AudiDto,SeatDto
+from ..util.theatre_util import TheatreDto,AudiDto,SeatDto,MovieDto
 from ..service.theatre_service import save_new_theatre, get_all_theatres, get_a_theatre
 from ..service.theatre_service import save_new_audi, get_all_audi, get_an_audi
-from ..service.theatre_service import init_seats,get_audi_theatre,get_all_seats,get_a_seat
+from ..service.theatre_service import init_a_seat,get_audi_theatre,get_all_seats,get_a_seat
+from ..service.theatre_service import save_new_movie, get_all_movies, get_a_movie,init_seats_in_audi
 
 api = TheatreDto.api
 _thtr = TheatreDto.thtr
@@ -15,6 +16,10 @@ _audi=AudiDto.audi
 spi= SeatDto.api
 _seat=SeatDto.seat
 
+mpi = MovieDto.api
+_mov = MovieDto.mov
+
+# 1- theatre list
 @api.route('/')
 class TheatreList(Resource):
     @api.doc('list_of_registered_theatres')
@@ -109,7 +114,7 @@ class SeatMap(Resource):
     def post(self):
         """Creates a new seatmap """
         data = request.json
-        return init_seats(data=data)
+        return init_seats_in_audi(data=data)
 
 
 @spi.route('/<public_id>')
@@ -125,3 +130,34 @@ class Seat(Resource):
             spi.abort(404)
         else:
             return seat
+
+@mpi.route('/')
+class Movies(Resource):
+    @mpi.doc('list_of_movies')
+    @mpi.marshal_list_with(_mov, envelope='data')
+    def get(self):
+        """List all seats in audi"""
+        return get_all_movies()
+
+    @mpi.response(201, 'movie successfully added')
+    @mpi.doc('save a new movie')
+    @mpi.expect(_mov, validate=True)
+    def post(self):
+        """save a new movie"""
+        data = request.json
+        return save_new_movie(data=data)
+
+
+@mpi.route('/<public_id>')
+@mpi.param('public_id', 'public id of movie')
+@mpi.response(404, 'Movie not found')
+class Mov(Resource):
+    @mpi.doc('get a movie')
+    @mpi.marshal_with(_mov)
+    def get(self, public_id):
+        """get a movie given its identifier"""
+        movie = get_a_movie(public_id)
+        if not movie:
+            mpi.abort(404)
+        else:
+            return movie

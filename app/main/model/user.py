@@ -1,17 +1,17 @@
 from .. import db, flask_bcrypt
 import datetime
 import jwt
-from app.main.model.blacklist import BlacklistToken
+from app.main.model.blacklist import Blacklisttoken
 from ..config import key
 
-class EndUser(db.Model):
+class Enduser(db.Model):
     """ User Model for storing user related details """
-    __tablename__ = "EndUser"
+    __tablename__ = "enduser"
+    __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False)
-    admin = db.Column(db.Boolean, nullable=False, default=False)
     public_id = db.Column(db.String(100), unique=True)
     username = db.Column(db.String(50), unique=True)
     password_hash = db.Column(db.String(100))

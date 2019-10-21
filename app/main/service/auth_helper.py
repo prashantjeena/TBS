@@ -1,4 +1,4 @@
-from app.main.model.user import EndUser
+from app.main.model.user import Enduser
 from ..service.blacklist_service import save_token
 
 
@@ -8,7 +8,7 @@ class UserAuth:
     def login_user(data):
         try:
             # fetch the user data
-            user = EndUser.query.filter_by(email=data.get('email')).first()
+            user = Enduser.query.filter_by(email=data.get('email')).first()
             if user and user.check_password(data.get('password')):
                 auth_token = user.encode_auth_token(user.id)
                 if auth_token:
@@ -40,7 +40,7 @@ class UserAuth:
         else:
             auth_token = ''
         if auth_token:
-            resp = EndUser.decode_auth_token(auth_token)
+            resp = Enduser.decode_auth_token(auth_token)
             if not isinstance(resp, str):
                 # mark the token as blacklisted
                 return save_token(token=auth_token)
@@ -62,9 +62,9 @@ class UserAuth:
         # get the auth token
         auth_token = new_request.headers.get('Authorization')
         if auth_token:
-            resp = EndUser.decode_auth_token(auth_token)
+            resp = Enduser.decode_auth_token(auth_token)
             if not isinstance(resp, str):
-                user = EndUser.query.filter_by(id=resp).first()
+                user = Enduser.query.filter_by(id=resp).first()
                 response_object = {
                     'status': 'success',
                     'data': {

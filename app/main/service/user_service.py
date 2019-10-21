@@ -2,13 +2,13 @@ import uuid
 import datetime
 
 from app.main import db
-from app.main.model.user import EndUser
+from app.main.model.user import Enduser
 
 
 def save_new_user(data):
-    user = EndUser.query.filter_by(email=data['email']).first()
+    user = Enduser.query.filter_by(email=data['email']).first()
     if not user:
-        new_user = EndUser(
+        new_user = Enduser(
             public_id=str(uuid.uuid4()),
             email=data['email'],
             username=data['username'],
@@ -43,11 +43,11 @@ def generate_token(user):
         return response_object, 401
 
 def get_all_users():
-    return EndUser.query.all()
+    return Enduser.query.all()
 
 
 def get_a_user(public_id):
-    return EndUser.query.filter_by(public_id=public_id).first()
+    return Enduser.query.filter_by(public_id=public_id).first()
 
 
 def save_changes(data):

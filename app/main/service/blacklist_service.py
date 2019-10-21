@@ -1,9 +1,9 @@
 from app.main import db
-from app.main.model.blacklist import BlacklistToken
+from app.main.model.blacklist import Blacklisttoken
 
 
 def save_token(token):
-    blacklist_token = BlacklistToken(token=token)
+    blacklist_token = Blacklisttoken(token=token)
     try:
         # insert the token
         db.session.add(blacklist_token)
