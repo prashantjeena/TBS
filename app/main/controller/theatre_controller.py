@@ -4,7 +4,7 @@ from flask_restplus import Resource
 from ..util.theatre_util import TheatreDto,AudiDto,SeatDto,MovieDto
 from ..service.theatre_service import save_new_theatre, get_all_theatres, get_a_theatre
 from ..service.theatre_service import save_new_audi, get_all_audi, get_an_audi
-from ..service.theatre_service import init_a_seat,get_audi_theatre,get_all_seats,get_a_seat
+from ..service.theatre_service import get_audi_theatre,get_all_seats,get_a_seat
 from ..service.theatre_service import save_new_movie, get_all_movies, get_a_movie,init_seats_in_audi
 
 api = TheatreDto.api
@@ -71,7 +71,6 @@ class AudiList(Resource):
 @bpi.route('/<public_id>')
 @bpi.param('public_id', 'The audi identifier')
 @bpi.response(404, 'audi not found.')
-
 class Audi(Resource):
     @bpi.doc('get an Audi')
     @bpi.marshal_with(_audi)
@@ -84,10 +83,9 @@ class Audi(Resource):
             return audi
 
 
-@bpi.route('/AudiT/<theatre_id>')
+@bpi.route('/audi/<theatre_id>')
 @bpi.param('theatre_id', 'The theatre id')
 @bpi.response(404, 'audi not found.')
-
 class AudiT(Resource):
     @bpi.doc('get an Audi in a theatre ')
     @bpi.marshal_with(_audi)
@@ -105,7 +103,7 @@ class SeatMap(Resource):
     @spi.doc('list_of_seats_in_audi')
     @spi.marshal_list_with(_seat, envelope='data')
     def get(self):
-        """List all seats in audi"""
+        """List all seats in theatre"""
         return get_all_seats()
 
     @spi.response(201, 'Seats successfully created.')
@@ -136,7 +134,7 @@ class Movies(Resource):
     @mpi.doc('list_of_movies')
     @mpi.marshal_list_with(_mov, envelope='data')
     def get(self):
-        """List all seats in audi"""
+        """List of all movies """
         return get_all_movies()
 
     @mpi.response(201, 'movie successfully added')

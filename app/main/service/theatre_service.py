@@ -60,63 +60,31 @@ def get_all_audi():
     return Audi.query.all()
 
 def get_audi_theatre(theatre_id):
-    return Audi.query.filter_by(theatre_id=theatre_id).first()
+    return Audi.query.filter_by(theatre_id=theatre_id).all()
 
 def get_an_audi(public_id):
     return Audi.query.filter_by(public_id=public_id).first()	   
 
-def init_a_seat(data):
-
-    r=Audi.query.with_entities(Audi.rows).filter_by(audi_id=data['audi.id'])
-    c=Audi.query.with_entities(Audi.rows).filter_by(audi_id=data['audi.id'])
-    if len(seat_no)!=2:
-        response_object = {
-            'status': 'fail',
-            'message': 'pleaser enter a valid seat number',
-        }
-        return response_object, 409
-    else:
-        R=int(data['seat_no'[0:1]])
-        C=int(data['seat_no'[1:]])
-        if R < r+1 and R > r-2:
-            seat=Seat(public_id=str(uuid.uuid4()),
-                seat_no=data['seat_no'],
-                audi_id=data['audi_id'],
-                seat_type='platinum'
-    			)
-            save_changes(seat)
-        elif R < r-1 and R > r-4 :
-            seat=Seat(public_id=str(uuid.uuid4()),
-    			seat_no=data['seat_no'],
-    			audi_id=data['audi_id'],
-    			seat_type='gold'
-    			)
-            save_changes(seat)
-        elif R<r-3:
-        	seat=Seat(public_id=str(uuid.uuid4()),
-        		seat_no=data['seat_no'],
-        		audi_id=data['audi_id']
-        		)
-        	save_changes(seat)
 
 def init_seats_in_audi(data):
     r=Audi.query.with_entities(Audi.rows).filter(Audi.id==data['audi_id']).scalar()
     c=Audi.query.with_entities(Audi.rows).filter(Audi.id==data['audi_id']).scalar()
-    print(r)
     for i in range(1,r+1):
         for j in range(1,c+1):
             if i < r+1 and i > r-2:
                 seat=Seat(public_id=str(uuid.uuid4()),
                 seat_no=str(i)+str(j),
                 audi_id=data['audi_id'],
-                seat_type='platinum'
+                seat_type='platinum',
+                seat_price=100
                 )
                 save_changes(seat)
             elif i < r-1 and i > r-4 :
                 seat=Seat(public_id=str(uuid.uuid4()),
                 seat_no=str(i)+str(j),
                 audi_id=data['audi_id'],
-                seat_type='gold'
+                seat_type='gold',
+                seat_price=50
                 )
                 save_changes(seat)
             elif i<r-3:
@@ -139,13 +107,27 @@ def get_a_seat(public_id):
 def save_new_movie(data):
     mov = Movie.query.filter_by(title=data['title']).first()
     if not mov:
+        if 'hindi' in data['language'].lower():
+            h=True
+        else:
+            h=False
+
+        if 'english' in data['language'].lower():
+            e=True
+        else:
+            e=False
+
         new_movie = Movie(
             title=data['title'],
+            public_id=str(uuid.uuid4()),
             cast=data['cast'],
             director=data['director'],
             duration_min=data['duration_min'],
             description=data['description'],
-            released_on=data['released_on']
+            released_on=data['released_on'],
+            theatre_id=data['theatre_id'],
+            Hindi=h,
+            English=e
             
         )
         save_changes(new_movie)

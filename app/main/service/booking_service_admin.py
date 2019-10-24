@@ -5,49 +5,6 @@ from app.main import db
 from app.main.model.theatre import Theatre,Audi,Seat,Movie,Showing,Date,Slot,Reservation
 
 
-def seat_checker(data):
-	T_check(data)
-
-def T_check(data):
-    theatre = Theatre.query.filter_by(name=data['theatre']).first()
-    if theatre:
-    	A_check(data)
-    else:
-        response_object = {
-            'status': 'fail',
-            'message': 'Theatre not found'
-        }
-        return response_object, 409
-
-def A_check(data):
-	audi=Audi.query.filter_by(name=data['audi']).first()
-	if audi:
-		S_check(data)
-	else:
-		response_object = {
-            'status': 'fail',
-            'message': 'Audi not found'
-        }
-		return response_object, 409
-def S_check(data):
-
-	seat=Seat.query.filter_by(seat_no=data['seat']).first()
-	if seat.status=='available':
-		response_object = {
-            'status': 'success',
-            'message': 'Seat is available'
-        }
-		return response_object, 201
-	else:
-		response_object = {
-            'status': 'fail',
-            'message': 'Seat is unavailable'
-        }
-		return response_object 
-
-#def available_seats(data):
-	#return Seat.query.filter(Audi.status==1).filter_by(audi_id=audi_id).filter()
-	
 def save_new_showing_details(data):
 	show=Showing.query.filter_by(audi_id=data['audi_id']).filter_by(date_id=data['date_id']).filter_by(movie_id=data['movie_id']).filter_by(slot_id=data['slot_id']).first()
 	if not show:
@@ -79,20 +36,13 @@ def get_all_movies():
 def get_a_movie(title):
 	return Movie.query.filter_by(title=title).first()
 
-def language_checker(name,language):
+def language_checker(title,language):
 	if language.lower()=='hindi':
-		movie=Movie.query.filter_by(Hindi=True).filter_by(name=name).first()
-		if movie:
-			return movie
-		else:
-			print('Movie not available in Hindi. Please select a different language')
-			
+		if Movie.query.filter_by(Hindi=True).filter_by(title=title).first():
+			return 'available in hindi'
 	if language.lower()=='english':
-		movie=Movie.query.filter_by(English=True).filter_by(name=name).first()
-		if movie:
-			return movie
-		else:
-			print('Movie not available in English. Please select a different language')
+		if Movie.query.filter_by(English=True).filter_by(title=title).first():
+			return 'available in english'
 
 #def get_audi_list_for_a_movie(name):
  #   return movie_audi.query.with_entities(movie_audi.Audi_name).filter_by(name=Movie_name).first()
@@ -126,7 +76,8 @@ def save_a_slot(data):
 	if not slot:
 		new_slot=Slot(
 			slot_num=data['slot_num'],
-			time=data['time']
+			time=data['time'],
+			audi_id=data['audi_id']
 			)
 		save_changes(new_slot)
 		response_object = {
@@ -149,6 +100,7 @@ def save_a_reservation(data):
 		for i in seat_id:
 			new_rsrv=Reservation(
 				seat_id=i,
+				status=data['status'],
 				showing_id=data['showing_id']
 				)
 			save_changes(new_rsrv)

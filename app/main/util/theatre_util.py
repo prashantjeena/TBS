@@ -38,11 +38,10 @@ class MovieDto:
         'director': fields.String( description='director of the movie'),
         'duration_min':fields.Integer( description='duration of the movie'),
         'description': fields.String( description='description of the movie'),
-        'price_movie' : fields.Integer( description='price of the movie'),
         'public_id': fields.String(description='Movie Identifier'),
         'released_on': fields.DateTime(description='release date and time'),      
-        'hindi':fields.Boolean(description='availability in hindi language'),
-        'english':fields.Boolean(description='availability in english language')
+        'language':fields.String(description='language the movie is available in'),
+        'theatre_id':fields.Integer(description='theatre identifier of movie')
 
     })
 
@@ -69,7 +68,8 @@ class SlotDto:
     slot = api.model('slot_details', {
         'id':fields.Integer(description='slot id'),
         'slot_num': fields.Integer(required=True, description='slot Identifier'),
-        'time': fields.DateTime(required=True, description='time of the slot')
+        'time': fields.DateTime(required=True, description='time of the slot'),
+        'audi_id': fields.Integer(required=True, description='audi id of the slot')
     })
 
 class ReservationDto:

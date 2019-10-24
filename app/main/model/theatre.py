@@ -15,6 +15,7 @@ class Theatre(db.Model):
     base_price=Column(Integer,nullable=False,default=200)
 
     audi = relationship('Audi', backref='theatre',lazy='dynamic')
+    movie = relationship('Movie', backref='theatre',lazy='dynamic')
 
     def __repr__(self):
         return "<Theatre '{}'>".format(self.name)
@@ -53,22 +54,8 @@ class Seat(db.Model):
 
     audi_id = Column(Integer, ForeignKey('audi.id'))
 
-
     def __repr__(self):
         return "<Seat : '{}'>".format(self.seat_no)
-
-    @property
-    def seat(self):
-        raise AttributeError('seat: write-only field')
-
-    @seat.setter
-    def seat(self,seat,seat_type):
-        if seat_type=='silver':
-            self.seat_price=audi.theatre.base_price
-        elif seat_type=='gold':
-            self.seat_price=50+audi.theatre.base_price
-        elif seat_type=='platinum':
-            self.seat_price=100+audi.theatre.base_price
 
 class Movie(db.Model):
     """ User Model for storing movie related details """
@@ -77,6 +64,7 @@ class Movie(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(255), nullable=False)
+    public_id = Column(String(100), unique=True)
     released_on = db.Column(db.DateTime)
     user_ratings=db.Column(db.Float)
     cast=db.Column(db.String(255))
@@ -94,15 +82,7 @@ class Movie(db.Model):
     def __repr__(self):
         return "<movie '{}'>".format(self.title)
 
-class Reservation(db.Model):
-    __tablename__= "reservation"
-    __table_args__ = (UniqueConstraint('seat_id', 'showing_id', name='ticket'),)
 
-    id=Column(Integer,primary_key=True,autoincrement=True)
-    status=Column(Boolean,default=True)
-
-    seat_id = Column(Integer, ForeignKey('seat.id'))
-    showing_id = Column(Integer, ForeignKey('showing.id'))
     
 class Showing(db.Model):
     __tablename__= "showing"
@@ -141,4 +121,50 @@ class Date(db.Model):
     movie=relationship('Movie', backref='date',lazy='dynamic')
     showing=relationship('Showing', backref='date',lazy='dynamic')
 
+class Reservation(db.Model):
+    __tablename__= "reservation"
+    __table_args__ = (UniqueConstraint('seat_id', 'showing_id', name='ticket'),)
 
+    id=Column(Integer,primary_key=True,autoincrement=True)
+    status=Column(Boolean,default=True)
+
+    seat_id = Column(Integer, ForeignKey('seat.id'))
+    showing_id = Column(Integer, ForeignKey('showing.id'))
+
+    def encode_auth_token(self, rsrv_id):
+        """
+        Generates the Auth Token
+        :return: string
+        """
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=10, seconds=1),
+                'iat': datetime.datetime.utcnow(),
+                'sub': rsrv_id
+            }
+            return jwt.encode(
+                payload,
+                key,
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
+
+    @staticmethod  
+    def decode_auth_token(auth_token):
+        """
+        Decodes the auth token
+        :param auth_token:
+        :return: integer|string
+        """
+        try:
+            payload = jwt.decode(auth_token, key)
+            is_blacklisted_token = BlacklistToken.check_blacklist(auth_token)
+            if is_blacklisted_token:
+                return 'Token blacklisted. Please select seats in again.'
+            else:
+                return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please select seats in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please select seats in again.'

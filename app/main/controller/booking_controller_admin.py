@@ -4,7 +4,7 @@ from flask_restplus import Resource
 from ..util.booking import BookingDto
 from ..util.theatre_util import MovieDto,TheatreDto,ShowingDto,DateDto,SlotDto
 from ..util.theatre_util import AudiDto,SeatDto,ReservationDto
-from ..service.booking_service_admin import seat_checker,save_a_date,save_new_showing_details
+from ..service.booking_service_admin import save_a_date,save_new_showing_details
 from ..service.booking_service_admin import get_all_movie_from_a_theatre,save_a_slot
 from ..service.booking_service_admin import get_a_movie,language_checker,save_a_reservation
 
@@ -35,10 +35,10 @@ _rsrv=ReservationDto.rsrv
 
 ### 2 & 3- theatre list given
 
-@mpi.route('/<theatre_id>')
+@mpi.route('/movie/<theatre_id>')
 @mpi.param('theatre_id', 'The theatre identifier')
 @mpi.response(404, 'No Movies found.')
-class MovieTheatre(Resource):
+class Movies(Resource):
     @mpi.doc('get all movies in theatre')
     @mpi.marshal_with(_mov)
     def get(self, theatre_id):
@@ -51,14 +51,13 @@ class MovieTheatre(Resource):
 
 ###  provided movies in a theatre
 
-@mpi.route('/<title>')
+@mpi.route('/movies/<title>')
 @mpi.param('title', 'The movie title')
 @mpi.response(404, 'movie not found.')
-
-class Movie(Resource):
-    @mpi.doc('get a movie details ')
+class MoviebyTitle(Resource):
+    @mpi.doc('get a movie details by title ')
     @mpi.marshal_with(_mov)
-    def get(self, title):
+    def get(self,title):
         """get a movie given its title """
         movie = get_a_movie(title)
         if not movie:
@@ -68,59 +67,25 @@ class Movie(Resource):
 
 ### provided movie details
 
-@mpi.route('/Movie/<title>/<language>')
-@mpi.param('title,language', 'The language identifier')
-@mpi.response(404, 'language not found.')
-class MovieLanguage(Resource):
-
-    @mpi.doc('Movies available in Hindi')
+@mpi.route('/moviel/<title>/<language>')
+@mpi.param('t', 'The movie identifier')
+@mpi.response(404, 'movie not found.')
+class Language(Resource):
+    @mpi.doc('Movie is available in Hindi')
     @mpi.marshal_list_with(_mov, envelope='data')
     def get(self,title,language):
 
         """ languages availability checker in a movie """
 
+       # title  = request.args.get('title', None)
+        #language  = request.args.get('language', None)
         movie=language_checker(title,language)
         if not movie:
             mpi.abort(404)
         else:
             return movie
 
-###language checker 
-
-@mpi.route('/audiList/<title>')
-@mpi.param('title', 'The movie identifier')
-@mpi.response(404, 'no audi found.')
-class AudiMovie(Resource):
-    @mpi.doc('get Audi list for Movie')
-    @mpi.marshal_with(_mov)
-    def get(self, name):
-
-        """get audis given its movie"""
-
-        audi = get_audi_list_for_a_movie(name)
-        if not audi:
-            mpi.abort(404)
-        else:
-            return audi
-
-#till here
-
-@mpi.route('/audiList/<title>')
-@mpi.param('title', 'The movie identifier')
-@mpi.response(404, 'no audi found.')
-class AudiMovie(Resource):
-    @mpi.doc('get Audi list for Movie')
-    @mpi.marshal_with(_mov)
-    def get(self, name):
-
-        """get audis given its movie"""
-
-        audi = get_audi_list_for_a_movie(name)
-        if not audi:
-            mpi.abort(404)
-        else:
-            return audi
-
+###language checker
 
 @spi.route('/')
 class ShowList(Resource):
